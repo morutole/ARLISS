@@ -57,7 +57,7 @@ void setup()
 
     LoRa.begin(19200); //Loraとの通信
     if(EEPROM.read(1) == 0){ //EEPROMで初回起動かどうか調べる。
-        delay(1000); //60sしたら開始(ロケット発射前にCdsセルが勘違いするのを防ぐ。)
+        delay(60000); //60sしたら開始(ロケット発射前にCdsセルが勘違いするのを防ぐ。)
         EEPROM.write(1,1);
     }
 }
@@ -229,9 +229,6 @@ void nichromecut2()
     delay(12000); //2回目は計15秒流す。
 
     digitalWrite(nichrome_pin_2,LOW);
-    delay(100);
-    digitalWrite(nichrome_pin_1,HIGH);
-    digitalWrite(nichrome_pin_2,HIGH);
 
     return;
 }

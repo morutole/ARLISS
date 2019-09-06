@@ -21,7 +21,7 @@
 
 static const float airpressure_on_the_ground = 101058.02; //高度計算用の地上の気圧(Pa)
 static const float temperature_on_the_ground = 28.68; //高度計算用の地上の気温(℃)
-static const float release_height = 300.0; //切り離し高度(m)
+static const float release_height = 2000.0; //切り離し高度(m)
 
 unsigned long time_cds;
 unsigned long time_height;
@@ -57,7 +57,7 @@ void setup()
 
     LoRa.begin(19200); //Loraとの通信
     if(EEPROM.read(1) == 0){ //EEPROMで初回起動かどうか調べる。
-        delay(1000); //60sしたら開始(ロケット発射前にCdsセルが勘違いするのを防ぐ。)
+        delay(4000); //60sしたら開始(ロケット発射前にCdsセルが勘違いするのを防ぐ。)
         EEPROM.write(1,1);
     }
 }
@@ -229,9 +229,6 @@ void nichromecut2()
     delay(12000); //2回目は計15秒流す。
 
     digitalWrite(nichrome_pin_2,LOW);
-    delay(100);
-    digitalWrite(nichrome_pin_1,HIGH);
-    digitalWrite(nichrome_pin_2,HIGH);
 
     return;
 }
@@ -283,7 +280,7 @@ void senttoLora()
 
 void gps_transmission()
 {
-    Serial.begin(9600); //GPSとの通信 
+    Serial.begin(9600); //GPSとの通信 :
 
     while(true){
         while (Serial.available() > 0){

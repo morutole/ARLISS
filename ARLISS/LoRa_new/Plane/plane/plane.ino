@@ -27,8 +27,6 @@ static const float difference_lon = cos(goal_latitude/180*M_PI)*M_PI*6378.137/18
 
 SoftwareSerial LoRa(LoRa_RX,LoRa_TX); //LoRaと接続、PixhawkはSerialでつなぐ。
 
-unsigned long time_auto_zero = 0;//オートが始まった最初の時刻を格納
-unsigned long time_auto = 0;//オートが始まってからの経過時間を格納
 int LoRa_send_Mode = 0; //LoRaでどれを送るか決める。
 
 unsigned long time_deploy2_start;
@@ -191,7 +189,6 @@ void loop()
                 PPM_Transmit(PPMMODE_AUTO);
             }
             
-            time_auto_zero = millis();
             MavLink_receive_GPS_and_send_with_LoRa_and_detect_waypoint(); //AUTOの間はここにいる。
 
             EEPROM.write(0,DEEPSTALL); //次に遷移
@@ -304,7 +301,6 @@ void MavLink_receive_GPS_and_send_with_LoRa_and_detect_waypoint()
     mavlink_message_t msg;
     mavlink_status_t status;
     float latitude,longtitude,altitude,distance;
-    boolean waypoint_near_flag;
     while(true){
         while(Serial.available()){ //通信出来てなかったら...悲しいね...
             uint8_t c= Serial.read();
@@ -320,7 +316,7 @@ void MavLink_receive_GPS_and_send_with_LoRa_and_detect_waypoint()
                         longtitude = packet.lon/1e7;
                         altitude = packet.alt/1e3;
                         distance = calculate_distance(latitude,longtitude);
-                        if(distance < 10.0){
+                        if(distance < 30.0){
                             record_deep_stall_point(latitude,longtitude,altitude);
                             
                             return;
