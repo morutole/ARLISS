@@ -40,8 +40,6 @@ void setup()
 
     LoRa.begin(19200); //LoRaとの通信開始
     delay(2000);
-
-    while(digitalRead(deploy_judge_pin_INPUT1) == LOW){}
 }
 
 void loop()
