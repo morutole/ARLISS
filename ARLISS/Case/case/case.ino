@@ -19,8 +19,8 @@
 #define nichrome_cut_mode 2 //LoRaの変更も含む。
 #define GPS_mode 3
 
-static const float airpressure_on_the_ground = 101058.02; //高度計算用の地上の気圧(Pa)
-static const float temperature_on_the_ground = 28.68; //高度計算用の地上の気温(℃)
+static const float airpressure_on_the_ground = 88192.07; //高度計算用の地上の気圧(Pa)
+static const float temperature_on_the_ground = 20.15; //高度計算用の地上の気温(℃)
 static const float release_height = 2000.0; //切り離し高度(m)
 
 unsigned long time_cds;
@@ -57,7 +57,7 @@ void setup()
 
     LoRa.begin(19200); //Loraとの通信
     if(EEPROM.read(1) == 0){ //EEPROMで初回起動かどうか調べる。
-        delay(4000); //60sしたら開始(ロケット発射前にCdsセルが勘違いするのを防ぐ。)
+        delay(300000); //60sしたら開始(ロケット発射前にCdsセルが勘違いするのを防ぐ。)
         EEPROM.write(1,1);
     }
 }
@@ -116,7 +116,7 @@ void cds()
 {
     int i,j,sum = 0;
     int analogpin[3] = {0,6,7};
-    static const int judge_value = 600;
+    static const int judge_value = 400;
     int Voltage_measure_value;
     int judge_times = 0;     
     while(judge_times < 3){ //3回連続OKでwhile抜ける
@@ -166,6 +166,11 @@ float heightjudge()
         EEPROM.get(4,time_cds);
         now_time = millis();
         if(height <= release_height){
+            float tempC = air_pressure_sensor.readTempC();
+            float humidity = air_pressure_sensor.readFloatHumidity();
+            EEPROM.put(40,pressure);
+            EEPROM.put(44,tempC);
+            EEPROM.put(48,humidity);
             air_pressure_sensor.setMode(MODE_SLEEP); //気圧センサスリープモード(電源消費を抑える)
             return height;
         }else if((now_time - time_cds) > 400000){ //6分後、勝手に切れる。
@@ -241,7 +246,7 @@ void LoRa_change_destination()
     delay(2000);
     LoRa.write("2\r");
     delay(10);
-    LoRa.write("g 0\r");
+    LoRa.write("g 1\r");
     delay(10);
     LoRa.write("q 2\r");
     delay(10);

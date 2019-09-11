@@ -18,9 +18,9 @@
 #define AUTO 5
 #define DEEPSTALL 6
 
-#define goal_latitude 35.6596325
-#define goal_longtitude 140.0737739
-#define goal_altitude 42.0
+#define goal_latitude 40.8843139
+#define goal_longtitude -119.1116194
+#define goal_altitude 1185.0
 #define difference_lat 111316.2056
 
 static const float difference_lon = cos(goal_latitude/180*M_PI)*M_PI*6378.137/180*1000;
@@ -36,8 +36,8 @@ unsigned long Sleep_time,Training_time,Stabilize_noseup_time,Stabilize_time,Auto
 
 int PPMMODE_Arm[8] = {500,500,0,1000,100,1000,500,0}; //アームはラダー900では足りない、1000必要
 int PPMMODE_MANUAL[8] = {500,500,0,500,100,500,500,0}; //ケースに入ってる間
-int PPMMODE_TRAINING[8] = {500,500,0,500,300,500,500,0}; //ピン抜け1回後に入る。
-int PPMMODE_STABILIZE_NOSEUP[8] = {500,900,0,500,425,500,500,0}; //900側が機首上げ
+int PPMMODE_TRAINING[8] = {500,500,300,500,300,500,500,0}; //ピン抜け1回後に入る。
+int PPMMODE_STABILIZE_NOSEUP[8] = {500,900,300,500,425,500,500,0}; //900側が機首上げ
 int PPMMODE_STABILIZE[8] = {500,500,300,500,425,500,500,0}; //300から徐々に上げる
 int PPMMODE_AUTO[8] = {500,500,0,500,815,500,500,0};
 int PPMMODE_DEEPSTALL[8] = {500,900,0,500,425,500,500,0}; //900側がエレベーター上げ
@@ -66,6 +66,11 @@ void setup()
 
     if(EEPROM.read(0) == 0){
         deploy_judge_pin_check();
+
+        for(i = 0;i < 250;++i){ //アーム
+            PPM_Transmit(PPMMODE_Arm);
+        }
+
         EEPROM.write(0,SLEEP); //ピン抜け1が終わった後に再起動すると困る、そのための1
     }
     
@@ -82,9 +87,7 @@ void setup()
 
     LoRa.begin(19200); //LoRaとの通信開始
     
-    for(i = 0;i < 250;++i){ //アーム
-        PPM_Transmit(PPMMODE_Arm);
-    }
+    delay(5000); //機体展開に5秒待つ。
     
     LoRa.write("cutoff\r\n"); //2回目を切るよう、ケースに伝える。
 }
@@ -239,7 +242,7 @@ void deploy_judge_pin_check()
 {
     int i = 0;
     while(true){
-        if(i == 400){
+        if(i == 800){
             break;
         }else if(digitalRead(deploy_judge_pin_INPUT1) == LOW && digitalRead(deploy_judge_pin_INPUT2) == LOW){
             ++i;

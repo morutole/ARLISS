@@ -9,8 +9,9 @@ void loop()
 {
     int EEPROM_Address;
     int Voltage_measure_value;
+    int default_Voltage_measure_value;
     unsigned long time_cds,time_height,time_nichrome1_start,time_nichrome1_end,time_nichrome2_start;
-    float height;
+    float height,lat,lon,alt,pressure,temp,humidity;
     for(EEPROM_Address = 0;EEPROM_Address < 2;++EEPROM_Address){
         Serial.println(EEPROM.read(EEPROM_Address));
     }
@@ -34,5 +35,26 @@ void loop()
     EEPROM_Address += 4;
     EEPROM.get(EEPROM_Address,time_nichrome2_start);
     Serial.println(time_nichrome2_start);
+    EEPROM_Address += 4;
+    EEPROM.get(EEPROM_Address,lat);
+    Serial.println(lat);
+    EEPROM_Address += 4;
+    EEPROM.get(EEPROM_Address,lon);
+    Serial.println(lon);
+    EEPROM_Address += 4;
+    EEPROM.get(EEPROM_Address,alt);
+    Serial.println(alt);
+    EEPROM_Address += 4;
+    EEPROM.get(EEPROM_Address,pressure);
+    Serial.println(pressure);
+    EEPROM_Address += 4;
+    EEPROM.get(EEPROM_Address,temp);
+    Serial.println(temp);
+    EEPROM_Address += 4;
+    EEPROM.get(EEPROM_Address,humidity);
+    Serial.println(humidity);
+    EEPROM_Address += 4;
+    EEPROM.get(EEPROM_Address,default_Voltage_measure_value);
+    Serial.println(default_Voltage_measure_value);
     while(true){}
 }
