@@ -50,7 +50,7 @@ void MavLink_receive()
                     LoRa.println(longtitude);delay(600);
                     LoRa.print("Alt:");delay(40);
                     altitude = packet.alt;
-                    LoRa.println(altitude1);delay(600);
+                    LoRa.println(altitude);delay(600);
                 }
             }
         }
