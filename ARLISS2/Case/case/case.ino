@@ -21,8 +21,8 @@
 
 static const int default_Cds_judge_value = 750;
 
-static const float airpressure_on_the_ground = 88192.07; //高度計算用の地上の気圧(Pa)
-static const float temperature_on_the_ground = 20.15; //高度計算用の地上の気温(℃)
+static const float airpressure_on_the_ground = 88513.76; //高度計算用の地上の気圧(Pa)
+static const float temperature_on_the_ground = 19.66; //高度計算用の地上の気温(℃)
 static const float release_height =2800.0; //切り離し高度(m)
 
 unsigned long time_cds;
@@ -264,8 +264,6 @@ void nichromecut2()
     LoRa_change_destination();
 
     delay(12000); //2回目は計15秒流す。
-
-    digitalWrite(nichrome_pin_2,LOW);
 
     return;
 }
